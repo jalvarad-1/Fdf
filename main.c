@@ -1,5 +1,9 @@
 #include "fdf.h"
 
+void rev_hexas()
+{
+    
+}
 void rev_map (char *map)
 {
     int i;
@@ -8,14 +12,14 @@ void rev_map (char *map)
     while (map[i] != '\0')
     {
         if (i == 0 && !ft_isdigit(map[i]))
-            ft_error()
-        if (map[i] == ' ' && (!ft_isdigit(map[i + 1]))
+            ft_error();
+        if (map[i] == ' ' && !ft_isdigit(map[i + 1]))
             ft_error();
         if (map[i] == '\n' && !ft_isdigit(map[i + 1]))
             ft_error();
         if (i != 0 && ft_isdigit(map[i]))
             rev_hexas();
-        
+        i++;
     }
 }
 

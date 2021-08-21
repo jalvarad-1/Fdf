@@ -6,13 +6,15 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/15 15:45:28 by jalvarad          #+#    #+#              #
-#    Updated: 2021/08/15 15:45:30 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/08/21 17:11:47 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME			= fdf.a
+NAME			= push_swap
 
-LIBFT			= ./Libft/libft.a
+LIBFT			= libft.a
+
+LIBFT_DIR		= ./Libft/
 
 SRCS			= main.c
 
@@ -22,24 +24,25 @@ CC				= gcc
 
 CFLAGS			= -Wall -Wextra -Werror
 
-all: $(NAME)
+all: make-libft $(NAME)
 
 $(NAME): $(OBJS)
-		$(MAKE) -C ./Libft
-		cp	Libft/libft.a $(NAME)
+		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) -o $(NAME)
+
+$(OBJS): $(SRCS)
 		$(CC) $(CFLAGS) -c $(SRCS)
-		ar rc $(NAME) $(OBJS)
-		gcc $(CFLAGS) $(NAME) -o fdf -fsanitize=address
+
+make-libft:
+		make -C $(LIBFT_DIR)
 
 clean:
+		rm -rf $(OBJS)
 		$(MAKE) clean -C ./Libft
-		rm -f $(OBJS)
 
 fclean: clean
 		$(MAKE) fclean -C ./Libft
-		rm -f $(OBJS) $(NAME)
-		rm -f push_swap
+		rm -rf $(NAME)
 
 re: fclean all
 
-.PHONY: all re m clean fclean bonus
+.PHONY: all re clean fclean
