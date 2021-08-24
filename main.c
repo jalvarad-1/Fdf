@@ -1,5 +1,10 @@
 #include "fdf.h"
 
+/*long int  **get_nbrs_map(char **split)
+{
+
+}*/
+
 void rev_hexas(char *map, int *i)
 {
     int b;
@@ -87,12 +92,36 @@ int main (int argc, char **argv)
 {
     int     fd;
     char    *all_map;
+    char    **split;
+    int     s_row;
+    int     s_aux;
+    int     i;
+    int     nbr_row;
+    //int     **nbrs_map;
+    //int     **col_map;;
 
+    i = 0;
     fd = open(argv[1], O_RDONLY);
     if (fd == -1 || argc != 2)
         ft_error();
     all_map = get_map (fd);
     rev_map (all_map);
+    nbr_row = ft_word_count(all_map, '\n');
+    split = ft_split(all_map, '\n');
+    s_row = ft_word_count(split[i], ' ');
+    i++;
+    while (nbr_row > 1 && split[i])
+    {
+        s_aux = ft_word_count(split[i], ' ');
+        if (s_row != s_aux)
+            ft_error();
+        i++;
+    }
+
+   // nbrs_map =  get_nbrs_map();
+
+    //printf ("%d\n", ft_word_count(all_map, '\n'));
     printf ("%s\n", all_map);
+    printf ("%d", 0xFFFFFF);
     free (all_map);
 }

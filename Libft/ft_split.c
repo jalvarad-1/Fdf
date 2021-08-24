@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jalvarad <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 17:15:43 by jalvarad          #+#    #+#             */
-/*   Updated: 2021/05/31 17:15:52 by jalvarad         ###   ########.fr       */
+/*   Updated: 2021/08/24 15:45:13 by jalvarad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_word_count(char const *str, char c)
+int	ft_word_count(char const *str, char c)
 {
 	int	count;
 	int	p;
