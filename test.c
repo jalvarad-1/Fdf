@@ -1,46 +1,10 @@
-//#include "fdf.h"
+#include "fdf.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
 # include <mlx.h>
 # include <math.h>
-
-typedef struct s_program
-{
-	void *mlx;
-	void *mlx_win;
-}	t_program;
-
-typedef struct s_data
-{
-	void *img;
-	char *ptr;
-	int bpp;
-	int	line_length;
-	int endian;
-}	t_data;
-
-typedef struct	s_values
-{
-	int		len;
-	int		ret;
-	int		row;
-	int		pos;
-	int		fd;
-	int		f_amp;
-	int		**nbr;
-	int		**color;
-	int		y;
-}	t_values;
-
-typedef struct	s_axis
-{
-	float		x_0;
-	float		x_1;
-	float		y_0;
-	float		y_1;
-}	t_axis;
 
 int		ft_key(int keycode)
 {
@@ -49,7 +13,7 @@ int		ft_key(int keycode)
 	return (0);
 }
 
-void	my_pixel_put(t_data *data, int x, int y, int color)
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
@@ -75,7 +39,7 @@ int main()
 	y_2 = 0;
 	while (y_2 < 201)
 	{
-			my_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
+			my_mlx_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
 			y_2++;
 			aux = (200 * 200) - (y_2 * y_2);
 			x_2 = sqrt(aux) + x;
@@ -85,7 +49,7 @@ int main()
 	x_2 = sqrt(aux) + x;
 	while (y_2 > -1)
 	{
-		my_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
+		my_mlx_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
 		y_2--;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = x - sqrt(aux) ;
@@ -95,14 +59,14 @@ int main()
 		y_2++;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = x - sqrt(aux);
-		my_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
+		my_mlx_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
 	}
 	while (y_2 > -1)
 	{
 		y_2--;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = sqrt(aux) + x;
-		my_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
+		my_mlx_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
 	}
 	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
 	mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
