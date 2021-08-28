@@ -12,11 +12,13 @@
 
 NAME			= fdf
 
+LNAME			= fdf_l
+
 LIBFT			= libft.a
 
 LIBFT_DIR		= ./Libft/
 
-SRCS			= main.c
+SRCS			= test.c
 
 OBJS			= $(SRCS:.c=.o)
 
@@ -24,10 +26,19 @@ CC				= gcc
 
 CFLAGS			= -Wall -Wextra -Werror
 
+LFLAGS			= -lmlx -lXext -lX11 -lm
+
+MFLAGS			= -lmlx -framework OpenGL -framework AppKit
+
 all: make-libft $(NAME)
 
+lin: make-libft $(LNAME)
+
+$(LNAME): $(OBJS)
+		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) $(LFLAGS) -o $(NAME)
+
 $(NAME): $(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) -o $(NAME)
+		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) $(MFLAGS) -o $(NAME)
 
 $(OBJS): $(SRCS)
 		$(CC) $(CFLAGS) -c $(SRCS)
