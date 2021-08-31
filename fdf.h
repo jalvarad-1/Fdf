@@ -46,4 +46,5 @@ typedef struct	s_axis
 }	t_axis;
 
 void    ft_error(void);
+void rev_hexas(char *map, int *i);
 #endif

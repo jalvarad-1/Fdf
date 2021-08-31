@@ -1,9 +1,125 @@
 #include "fdf.h"
-
-/*long int  **get_nbrs_map(char **split)
+void iso(int *x, int *y, int z)
 {
+    int previous_x;
+    int previous_y;
 
-}*/
+    previous_x = *x;
+    previous_y = *y;
+    *x = (previous_x - previous_y) * cos(0.523599);
+    *y = -z + (previous_x + previous_y) * sin(0.523599);
+}
+
+int		ft_key(int keycode)
+{
+	if (keycode == 53)
+		exit(0);
+	return (0);
+}
+
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = data->ptr + (y * data->line_length + x * (data->bpp / 8));
+	*(unsigned int*)dst = color;
+}
+
+void get_coordenates_init(long int **map, int s_row, int nbr_row)
+{
+    int a;
+    int b;
+    int	x = 500;	//CENTRO
+	int y = 500;	//CENTRO
+    int x_init;
+    int y_init;
+    int scale;
+    int s_aux;
+    int x_aux;
+    int c;
+    int d;
+    scale = 20;
+    printf ("%d---%d", s_row, nbr_row);
+    a = (s_row * scale)/2;
+    b = (nbr_row * scale)/2;
+    x_init = x - a;
+    y_init = y - b; 
+    s_aux = s_row; 
+    x_aux = x_init;
+    t_program	mlx_p;
+	t_data		img;
+    if (!map)
+        exit(0);
+	mlx_p.mlx = mlx_init();
+	mlx_p.mlx_win = mlx_new_window(mlx_p.mlx, 1000, 1000, "Hello World!");
+	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
+	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
+    while (nbr_row)
+    {
+        s_row = s_aux;
+        x_init = x_aux;
+        while (s_row)
+        {
+            c = x_init;
+            d = y_init;
+            //iso(&c, &d, 0);
+            printf("%d---%d\n", c, d);
+            my_mlx_pixel_put(&img, c, d, 0x0000FF00);
+            x_init += scale;
+            s_row--;
+        }
+        y_init += scale;  
+        nbr_row--;
+    }
+	//my_mlx_pixel_put(&img, x_init, y_init, 0x0000FF00);
+	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
+	mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
+	mlx_loop(mlx_p.mlx);
+}
+long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
+{
+    long int **map;
+    int i;
+    int j;
+    int c;
+
+    i = 0;
+    map = (long int **)malloc(sizeof(long int) * nbr_row);
+    
+    while (split[i])
+    {
+        j = 0;
+        c = 0;
+        map[i] = malloc(sizeof(long int *) * (s_row + 1));
+        while (split[i][j] && c < s_row)
+        {
+            map[i][c] = ft_atoi(split[i] + j);
+            printf ("%-3ld", map[i][c]);
+            if (map[i][c] > INT_MAX || map[i][c] < INT_MIN)
+			    ft_error();
+            while (split[i][j] == '-' || split[i][j] == '+')
+			    j++;
+		    while (split[i][j] == ' ')
+			    j++;
+		    while (ft_isdigit(split[i][j]))
+			    j++;
+            if (split[i][j] == ',')
+            {
+                j++;
+                //printf("|%c|", split[i][j]);
+                rev_hexas(split[i], &j);
+            }
+            //printf("|%c|", split[i][j]);
+		    while (split[i][j] == ' ')
+			    j++;
+            c++;
+        }
+        map[i][c] = 2147483648;
+        printf ("%ld\n", map[i][c]);
+        i++;
+    }
+    return (map);
+}
 
 void rev_hexas(char *map, int *i)
 {
@@ -97,7 +213,7 @@ int main (int argc, char **argv)
     int     s_aux;
     int     i;
     int     nbr_row;
-    //int     **nbrs_map;
+    long int     **map;
     //int     **col_map;;
 
     i = 0;
@@ -118,10 +234,11 @@ int main (int argc, char **argv)
         i++;
     }
 
-   // nbrs_map =  get_nbrs_map();
-
+    map =  get_nbrs_map(split, s_row, nbr_row);
+    get_coordenates_init(map, s_row, nbr_row);
     //printf ("%d\n", ft_word_count(all_map, '\n'));
-    printf ("%s\n", all_map);
-    printf ("%d", 0xFFFFFF);
+    //printf ("%s\n", all_map);
+    
+    //printf ("%d", 0xFFFFFF);
     free (all_map);
 }
