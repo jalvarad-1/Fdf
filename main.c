@@ -62,7 +62,7 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
         {
             c = x_init;
             d = y_init;
-            //iso(&c, &d, 0);
+            iso(&c, &d, 0);
             printf("%d---%d\n", c, d);
             my_mlx_pixel_put(&img, c, d, 0x0000FF00);
             x_init += scale;
@@ -106,16 +106,14 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
             if (split[i][j] == ',')
             {
                 j++;
-                //printf("|%c|", split[i][j]);
                 rev_hexas(split[i], &j);
             }
-            //printf("|%c|", split[i][j]);
 		    while (split[i][j] == ' ')
 			    j++;
             c++;
         }
         map[i][c] = 2147483648;
-        printf ("%ld\n", map[i][c]);
+        //printf ("%ld\n", map[i][c]);
         i++;
     }
     return (map);
@@ -206,39 +204,25 @@ void    ft_error(void)
 
 int main (int argc, char **argv)
 {
-    int     fd;
-    char    *all_map;
-    char    **split;
-    int     s_row;
-    int     s_aux;
-    int     i;
-    int     nbr_row;
-    long int     **map;
-    //int     **col_map;;
-
-    i = 0;
-    fd = open(argv[1], O_RDONLY);
-    if (fd == -1 || argc != 2)
+    t_tools_map     m;
+    m.i = 0;
+    m.fd = open(argv[1], O_RDONLY);
+    if (m.fd == -1 || argc != 2)
         ft_error();
-    all_map = get_map (fd);
-    rev_map (all_map);
-    nbr_row = ft_word_count(all_map, '\n');
-    split = ft_split(all_map, '\n');
-    s_row = ft_word_count(split[i], ' ');
-    i++;
-    while (nbr_row > 1 && split[i])
+    m.all_map = get_map (m.fd);
+    rev_map (m.all_map);
+    m.nbr_row = ft_word_count(m.all_map, '\n');
+    m.split = ft_split(m.all_map, '\n');
+    m.s_row = ft_word_count(m.split[m.i], ' ');
+    m.i++;
+    while (m.nbr_row > 1 && m.split[m.i])
     {
-        s_aux = ft_word_count(split[i], ' ');
-        if (s_row != s_aux)
+        m.s_aux = ft_word_count(m.split[m.i], ' ');
+        if (m.s_row != m.s_aux)
             ft_error();
-        i++;
+        m.i++;
     }
-
-    map =  get_nbrs_map(split, s_row, nbr_row);
-    get_coordenates_init(map, s_row, nbr_row);
-    //printf ("%d\n", ft_word_count(all_map, '\n'));
-    //printf ("%s\n", all_map);
-    
-    //printf ("%d", 0xFFFFFF);
-    free (all_map);
+    m.map =  get_nbrs_map(m.split, m.s_row, m.nbr_row);
+    get_coordenates_init(m.map, m.s_row, m.nbr_row);
+    free (m.all_map);
 }

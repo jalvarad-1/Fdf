@@ -24,26 +24,17 @@ typedef struct s_data
 	int endian;
 }	t_data;
 
-typedef struct	s_values
+typedef struct	s_tools_map
 {
-	int		len;
-	int		ret;
-	int		row;
-	int		pos;
-	int		fd;
-	int		f_amp;
-	int		**nbr;
-	int		**color;
-	int		y;
-}	t_values;
-
-typedef struct	s_axis
-{
-	float		x_0;
-	float		x_1;
-	float		y_0;
-	float		y_1;
-}	t_axis;
+	int			fd;
+    char		*all_map;
+    char		**split;
+    int			s_row;
+    int     	s_aux;
+    int			i;
+    int			nbr_row;
+    long int	**map;
+}	t_tools_map;
 
 void    ft_error(void);
 void rev_hexas(char *map, int *i);
