@@ -36,6 +36,24 @@ typedef struct	s_tools_map
     long int	**map;
 }	t_tools_map;
 
+typedef struct s_get_coord
+{
+	int a;
+    int b;
+    int	x;	//CENTRO
+	int y;	//CENTRO
+    int x_init;
+    int y_init;
+    int scale;
+    int s_aux;
+    int x_aux;
+    int c;
+    int d;
+	int i;
+	int j;
+	long int **array;
+}	t_get_coord;
+
 void    ft_error(void);
 void rev_hexas(char *map, int *i);
 #endif

@@ -1,4 +1,49 @@
 #include "fdf.h"
+void put_coords_good (int )
+{
+
+}
+long int ft_coord_map (int nbr_row, long int **map, t_get_coord c)
+{
+    int i;
+    int a;
+    
+    a = nbr_row;
+    i = 0;
+    c.array = (long int **)malloc(sizeof((long int *) * 2));
+    c.array[0] = malloc(sizeof((long int *((nbr_row * c.s_row) + 1);
+    c.array [1] = malloc(sizeof((long int *((nbr_row * c.s_row) + 1);
+    c.i = 0;
+    while (nbr_row)
+    {
+        s_row = c.s_aux;
+        c.x_init = c.x_aux;
+        while (s_row)
+        {
+            if (map[c.i][c.j] == 2147483648)
+            {
+                c.i++;
+                c.j = 0;
+            }
+            c.c = c.x_init;
+            c.d = c.y_init;
+            iso(&c.c, &c.d, map[c.i][c.j]);
+            c.array[0][i] = c.c;
+            c.array[1][i] = c.d;
+            i++;
+            c.x_init += c.scale;
+            s_row--;
+            c.j++;
+        }
+        c.y_init += c.scale;  
+        nbr_row--;
+    }
+    c.array[0][i] = 2147483648;
+    c.array[1][i] = 2147483648;
+    put_coords_good (a, map, c);
+    return (c.array);
+}
+
 void iso(int *x, int *y, int z)
 {
     int previous_x;
@@ -27,48 +72,49 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 void get_coordenates_init(long int **map, int s_row, int nbr_row)
 {
-    int a;
-    int b;
-    int	x = 500;	//CENTRO
-	int y = 500;	//CENTRO
-    int x_init;
-    int y_init;
-    int scale;
-    int s_aux;
-    int x_aux;
-    int c;
-    int d;
-    scale = 20;
-    printf ("%d---%d", s_row, nbr_row);
-    a = (s_row * scale)/2;
-    b = (nbr_row * scale)/2;
-    x_init = x - a;
-    y_init = y - b; 
-    s_aux = s_row; 
-    x_aux = x_init;
+    t_get_coord coords;
     t_program	mlx_p;
 	t_data		img;
+    coords.x = 500;	//CENTRO
+	coords.y = 500;	//CENTRO
+    coords.scale = 20;
+    printf ("%d---%d", s_row, nbr_row);
+    coords.a = (s_row * coords.scale)/2;
+    coords.b = (nbr_row * coords.scale)/2;
+    coords.x_init = coords.x - coords.a;
+    coords.y_init = coords.y - coords.b; 
+    coords.s_aux = s_row; 
+    coords.x_aux = coords.x_init;
+    coords.i = 0;
+    coords.j = 0;
     if (!map)
         exit(0);
 	mlx_p.mlx = mlx_init();
 	mlx_p.mlx_win = mlx_new_window(mlx_p.mlx, 1000, 1000, "Hello World!");
 	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
 	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
+    coords.array = ft_coord_map (nbr_row, map, coords);
     while (nbr_row)
     {
-        s_row = s_aux;
-        x_init = x_aux;
+        s_row = coords.s_aux;
+        coords.x_init = coords.x_aux;
         while (s_row)
         {
-            c = x_init;
-            d = y_init;
-            iso(&c, &d, 0);
-            printf("%d---%d\n", c, d);
-            my_mlx_pixel_put(&img, c, d, 0x0000FF00);
-            x_init += scale;
+            if (map[coords.i][coords.j] == 2147483648)
+            {
+                coords.i++;
+                coords.j = 0;
+            }
+            coords.c = coords.x_init;
+            coords.d = coords.y_init;
+            iso(&coords.c, &coords.d, map[coords.i][coords.j]);
+            printf("%d---%d\n", coords.c, coords.d);
+            my_mlx_pixel_put(&img, coords.c, coords.d, 0x0000FF00);
+            coords.x_init += coords.scale;
             s_row--;
+            coords.j++;
         }
-        y_init += scale;  
+        coords.y_init += coords.scale;  
         nbr_row--;
     }
 	//my_mlx_pixel_put(&img, x_init, y_init, 0x0000FF00);
