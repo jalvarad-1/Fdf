@@ -56,4 +56,5 @@ typedef struct s_get_coord
 
 void    ft_error(void);
 void rev_hexas(char *map, int *i);
+void iso(int *x, int *y, int z);
 #endif
