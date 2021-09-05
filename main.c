@@ -1,5 +1,54 @@
 #include "fdf.h"
 
+void recalcul_coords (long int **map, t_get_coord c)
+{
+    int i;
+    int s_row;
+    i = 0;
+    c.i = 0;
+    c.j = 0;
+    while (c.array[0][i] != 2147483648)
+    {
+        s_row = c.s_aux;
+        c.x_init = c.x_aux;
+        while (s_row)
+        {
+            if (map[c.i][c.j] == 2147483648)
+            {
+                c.i++;
+                c.j = 0;
+            }
+            c.c = c.x_init;
+            c.d = c.y_init;
+            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale));
+            c.array[0][i] = c.c;
+            c.array[1][i] = c.d;
+            i++;
+            c.x_init += c.scale;
+            s_row--;
+            c.j++;
+        }
+        c.y_init += c.scale;  
+    }
+}
+
+void recalcul_scale(t_get_coord c, int *i, int *j, long int **map)
+{
+    float max;
+    if (*i >= *j)
+        max = *i;
+    else
+        max = *j;
+    printf("%d  %f escala\n", c.scale, max);
+    c.scale = (c.scale * (950/max));
+    printf("%d   escala", c.scale);
+    if (c.scale == 0)
+        c.scale = 3;
+    //exit (-1);
+    recalcul_coords (map, c);
+
+}
+
 int get_the_center (long int *array, int i)
 {
     int	a;
@@ -71,21 +120,20 @@ void put_coords_good (long int **map, t_get_coord c)
 {
     int i;
     int j;
-
     i = get_map_size(c.array[0]);
     j = get_map_size(c.array[1]);
     printf("%d %d--> i\n", i, j);
     //exit(-1);
-    
-    if (!map)
-        return ;
-    if (i >= j)
+    recalcul_scale(c, &i, &j, map);
+    i = get_map_size(c.array[0]);
+    j = get_map_size(c.array[1]);
+    /*if (i >= j)
     {
-        if(i > 1100)
+        if(i > 1000)
             return ;   //////////hay que poner la funcion recalcul_coords
     }
-    else if (j > 1100)
-        return ;    //////////hay que poner la funcion recalcul_coords
+    else if (j > 1000)
+        return ;*/    //////////hay que poner la funcion recalcul_coords
     center_coords (c.array, i, j);
 }
 
@@ -113,7 +161,7 @@ long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c)
             }
             c.c = c.x_init;
             c.d = c.y_init;
-            iso(&c.c, &c.d, map[c.i][c.j]);
+            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale));
             c.array[0][i] = c.c;
             c.array[1][i] = c.d;
             i++;
@@ -181,12 +229,16 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
 	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
 	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
     coords.array = ft_coord_map (nbr_row, map, coords);
+    free(map);
+    printf("|%d|",nbr_row);
     while (coords.array[0][i] != 2147483648)
     {
-        my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], 0x0000FF00);
+        if (coords.array[0][i] < 1000 && coords.array[1][i] < 1000)
+            my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], 0x0000FF00);
         //while ()
         i++;
     }
+
     /*while (nbr_row)
     {
         s_row = coords.s_aux;
@@ -236,6 +288,8 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
             //printf ("%-3ld", map[i][c]);
             if (map[i][c] > INT_MAX || map[i][c] < INT_MIN)
 			    ft_error();
+            if (map[i][c] > 250)
+                map[i][c] = 250;
             while (split[i][j] == '-' || split[i][j] == '+')
 			    j++;
 		    while (split[i][j] == ' ')
