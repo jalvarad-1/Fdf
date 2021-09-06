@@ -1,4 +1,97 @@
 #include "fdf.h"
+int absolute(int x)
+{
+    if (x < 0)
+        return (-x);
+    return (x);
+}
+
+void get_line_in2points(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0, j = y1;
+{
+    int dx;
+    int dy;
+    int steps;
+    float x;
+    float y;
+    dx = c.d - c.c;
+    dy = c.j - c.i;
+    if (absolute(dx) > absolute(dy))
+        steps = absolute(dx);
+    else
+        steps = absolute(dy);
+    c.xinc = dx /(float)steps;
+    c.yinc = dy /(float)steps;
+    x = c.c;
+    y = c.i;
+    printf("%f ,  %f, %d, %d, %d\n",c.xinc, c.yinc, dx, dy, steps);
+    //exit (-1);
+    while (x < c.d)
+    {
+        x = x + c.xinc;
+        y = y + c.yinc;
+        //printf("%f , %f, %d\n",x , y, c.d);
+        my_mlx_pixel_put(img, x, y, 0x00FF00);
+    }
+}
+
+void get_vertical_lines(t_data *img, t_get_coord c)
+{
+    int i;
+    int n_verticals;
+    int nbr_row;
+    c.a = c.s_aux;
+    nbr_row = c.c;
+    n_verticals = 0;
+    while(n_verticals < c.s_aux)
+    {
+        c.b = 0;
+        i = n_verticals;
+        while (c.array[0][i] != 2147483648 && c.b < nbr_row)
+        {
+            c.c = c.array[0][i];
+            c.d = c.array[0][i + c.a];
+            c.i = c.array[1][i];
+            c.j = c.array[1][i + c.a];
+            printf("yheyyy !!!\n");
+            get_line_in2points(img, c);
+            i += c.a;
+            c.b++;
+        }
+        return ;
+        n_verticals++;
+    }
+}
+void get_horizontal_lines(t_data *img, t_get_coord c)
+{
+    int i;
+    int nbr_row;
+    int aux_n_row;
+
+    i = 0;
+    nbr_row = c.a;
+    aux_n_row = 0;
+    while(aux_n_row < nbr_row)
+    {
+        while (c.array[0][i] != 2147483648)
+        {
+            c.c = c.array[0][i];
+            c.d = c.array[0][i + 1];
+            c.i = c.array[1][i];
+            c.j = c.array[1][i + 1];
+            printf("yeahhh !!!\n");
+            get_line_in2points(img, c);
+            i++;
+            printf("yes\n");
+            if ((i+1)%c.s_aux == 0)
+            {  
+                printf("aaaaaaaaaaaaaaaayes ---> %d\n", c.s_aux);
+                //exit(-1);
+                aux_n_row++;
+                i++;
+            }
+        }
+    }
+}
 
 void recalcul_coords (long int **map, t_get_coord c)
 {
@@ -140,9 +233,7 @@ void put_coords_good (long int **map, t_get_coord c)
 long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c)
 {
     int i;
-    int a;
     int s_row;
-    a = nbr_row;
     i = 0;
     c.array = (long int **)malloc(sizeof(long int *) * 2);
     c.array[0] = malloc(sizeof(long int)*(nbr_row * c.s_aux + 1));
@@ -222,23 +313,25 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
     coords.x_aux = coords.x_init;
     coords.i = 0;
     coords.j = 0;
-    if (!map)
-        exit(0);
 	mlx_p.mlx = mlx_init();
 	mlx_p.mlx_win = mlx_new_window(mlx_p.mlx, 1000, 1000, "Hello World!");
 	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
 	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
     coords.array = ft_coord_map (nbr_row, map, coords);
     free(map);
-    printf("|%d|",nbr_row);
+    coords.a = nbr_row;
+    printf("|%d||%d|",nbr_row, s_row);
+    //exit(0);
     while (coords.array[0][i] != 2147483648)
     {
         if (coords.array[0][i] < 1000 && coords.array[1][i] < 1000)
             my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], 0x0000FF00);
+        //get_horizontal_lines(&img, coords);
         //while ()
         i++;
     }
-
+    get_horizontal_lines(&img, coords);
+    get_vertical_lines(&img, coords);
     /*while (nbr_row)
     {
         s_row = coords.s_aux;
@@ -264,7 +357,7 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
     }*/
 	//my_mlx_pixel_put(&img, x_init, y_init, 0x0000FF00);
 	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
-	mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
+	//mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
 	mlx_loop(mlx_p.mlx);
 }
 long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)

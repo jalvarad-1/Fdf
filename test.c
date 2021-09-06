@@ -8,12 +8,12 @@
 
 int		ft_key(int keycode)
 {
-	if (keycode == 53)
+	if (keycode == 54)
 		exit(0);
 	return (0);
 }
 
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void	my_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
@@ -39,7 +39,7 @@ int main()
 	y_2 = 0;
 	while (y_2 < 201)
 	{
-			my_mlx_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
+			my_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
 			y_2++;
 			aux = (200 * 200) - (y_2 * y_2);
 			x_2 = sqrt(aux) + x;
@@ -49,7 +49,7 @@ int main()
 	x_2 = sqrt(aux) + x;
 	while (y_2 > -1)
 	{
-		my_mlx_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
+		my_pixel_put(&img, x_2, (y_2 + y), 0x0000FF00);
 		y_2--;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = x - sqrt(aux) ;
@@ -59,16 +59,16 @@ int main()
 		y_2++;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = x - sqrt(aux);
-		my_mlx_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
+		my_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
 	}
 	while (y_2 > -1)
 	{
 		y_2--;
 		aux = (200 * 200) - (y_2 * y_2);
 		x_2 = sqrt(aux) + x;
-		my_mlx_pixel_put(&img, x_2, (y - y_2), 0x0000FF00);
+		my_pixel_put(&img, x_2, (y - y_2), 0x00FF00);
 	}
 	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
-	mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
+	//mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
 	mlx_loop(mlx_p.mlx);
 }

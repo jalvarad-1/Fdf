@@ -51,10 +51,13 @@ typedef struct s_get_coord
     int d;
 	int i;
 	int j;
+    float xinc;
+    float yinc;
 	long int **array;
 }	t_get_coord;
 
 void    ft_error(void);
 void rev_hexas(char *map, int *i);
 void iso(int *x, int *y, int z);
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 #endif
