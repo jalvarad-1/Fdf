@@ -54,6 +54,7 @@ void get_vertical_lines(t_data *img, t_get_coord c)
             c.j = c.array[1][i + c.a];
             printf("yheyyy !!!\n");
             get_line_in2points(img, c);
+            return ;
             i += c.a;
             c.b++;
         }
