@@ -36,6 +36,7 @@ static int	ft_return(ssize_t n_bytes, char **save, char **line)
 		*line = ft_strdup(*save);
 		free(*save);
 		*save = NULL;
+		return (-1);
 	}
 	return (0);
 }

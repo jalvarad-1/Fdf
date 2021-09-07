@@ -1,9 +1,78 @@
 #include "fdf.h"
+
+int ft_htoi(char *str, int *b)
+{
+    int b;
+    int nb;
+
+    (*b) += 2;
+    nb = 0;
+    while (str[*b] != ' ' && str[*b] != '\n')
+    {
+        while (str[*b] >= '0' && str[*b] <= '9')
+		    nb = (nb * 10) + (str[(*b)++] - '0');
+        if (str[*b] == 'A' || str[*b] == 'a')
+            nb = (nb * 10) + 10;
+        else if (str[*b] == 'B' || str[*b] == 'b')
+            nb = (nb * 10) + 11;
+        else if (str[*b] == 'C' || str[*b] == 'c')
+            nb = (nb * 10) + 12;
+        else if (str[*b] == 'D' || str[*b] == 'd')
+            nb = (nb * 10) + 13;
+        else if (str[*b] == 'E' || str[*b] == 'e')
+            nb = (nb * 10) + 14;
+        else if (str[*b] == 'F' || str[*b] == 'f')
+            nb = (nb * 10) + 15;
+        b++;
+    }
+    return (nb);
+}
+
 int absolute(int x)
 {
     if (x < 0)
         return (-x);
     return (x);
+}
+
+void get_line_in2points2(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0, j = y1;
+{
+    int dx;
+    int dy;
+    int steps;
+    float x;
+    float y;
+    dx = c.d - c.c;
+    dy = c.j - c.i;
+    if (absolute(dx) > absolute(dy))
+        steps = absolute(dx);
+    else
+        steps = absolute(dy);
+    c.xinc = dx /(float)steps;
+    c.yinc = dy /(float)steps;
+    x = c.c;
+    y = c.i;
+    printf("%f ,  %f, %d, %d, %d\n",c.xinc, c.yinc, dx, dy, steps);
+    if (c.i < c.j)
+    {
+        while (y < c.j)
+        {
+            x = x + c.xinc;
+            y = y + c.yinc;
+            printf("%f , %f, %d   sdfgh\n",x , y, c.d);
+            my_mlx_pixel_put(img, x, y, 0x00FF00);
+        }
+    }
+    else if (c.i > c.j)
+    {
+         while (y > c.j)
+        {
+            x = x + c.xinc;
+            y = y + c.yinc;
+            printf("%f , %f, %d   sdfghsdfghjk\n",x , y, c.d);
+            my_mlx_pixel_put(img, x, y, 0x00FF00);
+        }
+    }
 }
 
 void get_line_in2points(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0, j = y1;
@@ -24,12 +93,11 @@ void get_line_in2points(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0
     x = c.c;
     y = c.i;
     printf("%f ,  %f, %d, %d, %d\n",c.xinc, c.yinc, dx, dy, steps);
-    //exit (-1);
     while (x < c.d)
     {
         x = x + c.xinc;
         y = y + c.yinc;
-        //printf("%f , %f, %d\n",x , y, c.d);
+        printf("%f , %f, %d   sdfgh\n",x , y, c.d);
         my_mlx_pixel_put(img, x, y, 0x00FF00);
     }
 }
@@ -39,26 +107,24 @@ void get_vertical_lines(t_data *img, t_get_coord c)
     int i;
     int n_verticals;
     int nbr_row;
-    c.a = c.s_aux;
-    nbr_row = c.c;
+
+    nbr_row = c.a;
     n_verticals = 0;
     while(n_verticals < c.s_aux)
     {
         c.b = 0;
         i = n_verticals;
-        while (c.array[0][i] != 2147483648 && c.b < nbr_row)
+        while (c.array[0][i] != 2147483648 && c.b < (nbr_row - 1)) // && n_verticals != c.s_aux)
         {
             c.c = c.array[0][i];
-            c.d = c.array[0][i + c.a];
+            c.d = c.array[0][i + c.s_aux];
             c.i = c.array[1][i];
-            c.j = c.array[1][i + c.a];
-            printf("yheyyy !!!\n");
-            get_line_in2points(img, c);
-            return ;
-            i += c.a;
+            c.j = c.array[1][i + c.s_aux];
+            printf("yheyyy --linea  %d   %d!!!\n", c.b, nbr_row);
+            get_line_in2points2(img, c);
+            i += c.s_aux;
             c.b++;
         }
-        return ;
         n_verticals++;
     }
 }
@@ -114,7 +180,7 @@ void recalcul_coords (long int **map, t_get_coord c)
             }
             c.c = c.x_init;
             c.d = c.y_init;
-            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale));
+            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale/1.5));
             c.array[0][i] = c.c;
             c.array[1][i] = c.d;
             i++;
@@ -134,10 +200,10 @@ void recalcul_scale(t_get_coord c, int *i, int *j, long int **map)
     else
         max = *j;
     printf("%d  %f escala\n", c.scale, max);
-    c.scale = (c.scale * (950/max));
+    c.scale = (c.scale * (980/max));
     printf("%d   escala", c.scale);
     if (c.scale == 0)
-        c.scale = 3;
+        c.scale = 1;
     //exit (-1);
     recalcul_coords (map, c);
 
@@ -253,7 +319,7 @@ long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c)
             }
             c.c = c.x_init;
             c.d = c.y_init;
-            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale));
+            iso(&c.c, &c.d, (map[c.i][c.j] * c.scale/1.5));
             c.array[0][i] = c.c;
             c.array[1][i] = c.d;
             i++;
@@ -333,30 +399,6 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
     }
     get_horizontal_lines(&img, coords);
     get_vertical_lines(&img, coords);
-    /*while (nbr_row)
-    {
-        s_row = coords.s_aux;
-        coords.x_init = coords.x_aux;
-        while (s_row)
-        {
-            if (map[coords.i][coords.j] == 2147483648)
-            {
-                coords.i++;
-                coords.j = 0;
-            }
-            coords.c = coords.x_init;
-            coords.d = coords.y_init;
-            iso(&coords.c, &coords.d, map[coords.i][coords.j]);
-            printf("%d---%d\n", coords.c, coords.d);
-            my_mlx_pixel_put(&img, coords.c, coords.d, 0x0000FF00);
-            coords.x_init += coords.scale;
-            s_row--;
-            coords.j++;
-        }
-        coords.y_init += coords.scale;  
-        nbr_row--;
-    }*/
-	//my_mlx_pixel_put(&img, x_init, y_init, 0x0000FF00);
 	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
 	//mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
 	mlx_loop(mlx_p.mlx);
@@ -382,8 +424,8 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
             //printf ("%-3ld", map[i][c]);
             if (map[i][c] > INT_MAX || map[i][c] < INT_MIN)
 			    ft_error();
-            if (map[i][c] > 250)
-                map[i][c] = 250;
+            if (map[i][c] > 350)
+                map[i][c] = 350;
             while (split[i][j] == '-' || split[i][j] == '+')
 			    j++;
 		    while (split[i][j] == ' ')
@@ -400,7 +442,6 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
             c++;
         }
         map[i][c] = 2147483648;
-        //printf ("%ld\n", map[i][c]);
         i++;
     }
     return (map);
@@ -412,17 +453,28 @@ void rev_hexas(char *map, int *i)
 
     b = 0;
     if (map[*i] != '0' || map[(*i) + 1] != 'x')
-        ft_error ();
-    (*i) +=2;
-    while (b < 6)
     {
-        if (map[*i] < '0' || map[*i] > 'F')
+        printf("heheheh\n");
+        ft_error ();
+    }
+    (*i) +=2;
+    while (map[*i] && (map[*i] != ' ' && map[*i] != '\n') )
+    {
+        if (map[*i] < '0' || (map[*i] > '9' && map[*i] < 'A'))
+        {
+            printf("heheheh\n");
             ft_error ();
-        if (map[*i] > '9' && map[*i] < 'A')
+        }
+        if ((map[*i] > 'F' && map[*i] < 'a') || map[*i] > 'f')
+        {
+            printf("2heheheh\n");
             ft_error ();
+        }
         (*i)++;
         b++;
     }
+    if (b > 6)
+        ft_error ();
 }
 
 void rev_map (char *map)
@@ -432,10 +484,15 @@ void rev_map (char *map)
     i = 0;
     while (map[i] != '\0')
     {
+        while(map[i] == ' ')
+            i++;
         if(map[i] == '-' || map[i] == '+')
             i++;
         if(!ft_isdigit(map[i]))
+        {
+            printf("|%c|2heheheh\n", map[i]);
             ft_error();
+        }
         while (ft_isdigit(map[i]))
             i++;
         if (map [i] == ',')
@@ -462,11 +519,13 @@ char *get_map(int fd)
     line = NULL;
     all_map = NULL;
     i = 1;
-    while (i > 0)
+    //get_next_line (fd, &line);
+    while (i > -1)
     {
         i = get_next_line (fd, &line);
         aux = ft_strjoin(line, "\n");
         free (line);
+        line = NULL;
         if (!all_map)
         {
             all_map = ft_strdup(aux);
@@ -477,7 +536,7 @@ char *get_map(int fd)
             line = ft_strjoin(all_map, aux);
             free (all_map);
             free (aux);
-            all_map = line;
+            all_map = ft_strdup(line);
         }
     }
     return (all_map);
