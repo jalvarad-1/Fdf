@@ -2,30 +2,28 @@
 
 int ft_htoi(char *str, int *b)
 {
-    int b;
-    int nb;
-
+	int	len;
+	int	dec;
+	int	base;
+    
     (*b) += 2;
-    nb = 0;
-    while (str[*b] != ' ' && str[*b] != '\n')
-    {
-        while (str[*b] >= '0' && str[*b] <= '9')
-		    nb = (nb * 10) + (str[(*b)++] - '0');
-        if (str[*b] == 'A' || str[*b] == 'a')
-            nb = (nb * 10) + 10;
-        else if (str[*b] == 'B' || str[*b] == 'b')
-            nb = (nb * 10) + 11;
-        else if (str[*b] == 'C' || str[*b] == 'c')
-            nb = (nb * 10) + 12;
-        else if (str[*b] == 'D' || str[*b] == 'd')
-            nb = (nb * 10) + 13;
-        else if (str[*b] == 'E' || str[*b] == 'e')
-            nb = (nb * 10) + 14;
-        else if (str[*b] == 'F' || str[*b] == 'f')
-            nb = (nb * 10) + 15;
-        b++;
-    }
-    return (nb);
+    while (str[*b] && str[*b] != ' ' && str[*b] != '\n')
+        (*b)++;
+    len = (*b) - 1;
+    dec = 0;
+	base = 1;
+	while (str[len] != 'x' && str[len] != 'X')
+	{
+		if (ft_isdigit(str[len]))
+			dec += (str[len] - 48) * base;
+		else if (str[len] >= 'A' && str[len] <= 'F')
+			dec += (str[len] - 55) * base;
+		else if (str[len] >= 'a' && str[len] <= 'f')
+			dec += (str[len] - 87) * base;
+		base *= 16;
+		len--;
+	}
+	return (dec);
 }
 
 int absolute(int x)
@@ -550,6 +548,10 @@ void    ft_error(void)
 
 int main (int argc, char **argv)
 {
+    /*int a = 0;
+    int hex = ft_htoi("0x00FF00", &a);
+    printf(" %d  ----  %d\n", hex, 0xFF00);
+    exit (-1);*/
     t_tools_map     m;
     m.i = 0;
     m.fd = open(argv[1], O_RDONLY);
