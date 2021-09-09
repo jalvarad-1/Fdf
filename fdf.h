@@ -34,6 +34,7 @@ typedef struct	s_tools_map
     int			i;
     int			nbr_row;
     long int	**map;
+    long int    *colors;
 }	t_tools_map;
 
 typedef struct s_get_coord
@@ -47,6 +48,7 @@ typedef struct s_get_coord
     int scale;
     int s_aux;
     int x_aux;
+    int color;
     int c;
     int d;
 	int i;

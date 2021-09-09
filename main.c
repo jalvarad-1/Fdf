@@ -58,7 +58,7 @@ void get_line_in2points2(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y
             x = x + c.xinc;
             y = y + c.yinc;
             printf("%f , %f, %d   sdfgh\n",x , y, c.d);
-            my_mlx_pixel_put(img, x, y, 0x00FF00);
+            my_mlx_pixel_put(img, x, y, c.color);
         }
     }
     else if (c.i > c.j)
@@ -68,7 +68,7 @@ void get_line_in2points2(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y
             x = x + c.xinc;
             y = y + c.yinc;
             printf("%f , %f, %d   sdfghsdfghjk\n",x , y, c.d);
-            my_mlx_pixel_put(img, x, y, 0x00FF00);
+            my_mlx_pixel_put(img, x, y, c.color);
         }
     }
 }
@@ -96,7 +96,7 @@ void get_line_in2points(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0
         x = x + c.xinc;
         y = y + c.yinc;
         printf("%f , %f, %d   sdfgh\n",x , y, c.d);
-        my_mlx_pixel_put(img, x, y, 0x00FF00);
+        my_mlx_pixel_put(img, x, y, c.color);
     }
 }
 
@@ -118,6 +118,7 @@ void get_vertical_lines(t_data *img, t_get_coord c)
             c.d = c.array[0][i + c.s_aux];
             c.i = c.array[1][i];
             c.j = c.array[1][i + c.s_aux];
+            c.color = c.array[2][i];
             printf("yheyyy --linea  %d   %d!!!\n", c.b, nbr_row);
             get_line_in2points2(img, c);
             i += c.s_aux;
@@ -143,6 +144,7 @@ void get_horizontal_lines(t_data *img, t_get_coord c)
             c.d = c.array[0][i + 1];
             c.i = c.array[1][i];
             c.j = c.array[1][i + 1];
+            c.color = c.array[2][i];
             printf("yeahhh !!!\n");
             get_line_in2points(img, c);
             i++;
@@ -295,14 +297,15 @@ void put_coords_good (long int **map, t_get_coord c)
     center_coords (c.array, i, j);
 }
 
-long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c)
+long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c, long int *h)
 {
     int i;
     int s_row;
     i = 0;
-    c.array = (long int **)malloc(sizeof(long int *) * 2);
+    c.array = (long int **)malloc(sizeof(long int *) * 3);
     c.array[0] = malloc(sizeof(long int)*(nbr_row * c.s_aux + 1));
     c.array [1] = malloc(sizeof(long int) *(nbr_row * c.s_aux + 1));
+    c.array [2] = h;
     c.i = 0;
     while (nbr_row)
     {
@@ -330,6 +333,7 @@ long int **ft_coord_map (int nbr_row, long int **map, t_get_coord c)
     }
     c.array[0][i] = 2147483648;
     c.array[1][i] = 2147483648;
+    c.array[2][i] = 2147483648;
     put_coords_good (map, c);
     return (c.array);
 }
@@ -360,7 +364,7 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-void get_coordenates_init(long int **map, int s_row, int nbr_row)
+void get_coordenates_init(long int **map, int s_row, int nbr_row, long int *h)
 {
     t_get_coord coords;
     t_program	mlx_p;
@@ -382,7 +386,7 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
 	mlx_p.mlx_win = mlx_new_window(mlx_p.mlx, 1000, 1000, "Hello World!");
 	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
 	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
-    coords.array = ft_coord_map (nbr_row, map, coords);
+    coords.array = ft_coord_map (nbr_row, map, coords, h);
     free(map);
     coords.a = nbr_row;
     printf("|%d||%d|",nbr_row, s_row);
@@ -390,7 +394,7 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
     while (coords.array[0][i] != 2147483648)
     {
         if (coords.array[0][i] < 1000 && coords.array[1][i] < 1000)
-            my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], 0x0000FF00);
+            my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], coords.array[2][i]);
         //get_horizontal_lines(&img, coords);
         //while ()
         i++;
@@ -401,16 +405,19 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row)
 	//mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
 	mlx_loop(mlx_p.mlx);
 }
-long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
+
+long int  **get_nbrs_map(char **split, int  s_row, int nbr_row, long int **h)
 {
     long int **map;
     int i;
     int j;
     int c;
+    int x;
 
+    x = 0;
     i = 0;
-    map = (long int **)malloc(sizeof(long int) * nbr_row);
-    
+    map = (long int **)malloc(sizeof(long int * ) * nbr_row);
+    *h = malloc(sizeof(long int) * ((nbr_row * s_row) + 1));
     while (split[i])
     {
         j = 0;
@@ -430,14 +437,20 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row)
 			    j++;
 		    while (ft_isdigit(split[i][j]))
 			    j++;
-            if (split[i][j] == ',')
-            {
-                j++;
-                rev_hexas(split[i], &j);
-            }
+            if (1)
+            {    
+                if (split[i][j] == ',')
+                {
+                    j++;
+                    (*h)[x] = ft_htoi(split[i], &j);
+                }
+                else
+                    (*h)[x] = 0xFFFFFF;
+            } 
 		    while (split[i][j] == ' ')
 			    j++;
             c++;
+            x++;
         }
         map[i][c] = 2147483648;
         i++;
@@ -570,7 +583,7 @@ int main (int argc, char **argv)
             ft_error();
         m.i++;
     }
-    m.map =  get_nbrs_map(m.split, m.s_row, m.nbr_row);
-    get_coordenates_init(m.map, m.s_row, m.nbr_row);
+    m.map =  get_nbrs_map(m.split, m.s_row, m.nbr_row, &m.colors);
+    get_coordenates_init(m.map, m.s_row, m.nbr_row, m.colors);
     free (m.all_map);
 }
