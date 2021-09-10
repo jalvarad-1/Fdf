@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/15 15:45:28 by jalvarad          #+#    #+#              #
-#    Updated: 2021/08/31 15:19:46 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/09/10 19:07:36 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc
 
-CFLAGS			= -Wall -Wextra -Werror
+CFLAGS			= -Wall -Wextra -Werror -fsanitize=address
 
 LFLAGS			= -lmlx -lXext -lX11 -lm
 

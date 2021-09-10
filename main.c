@@ -1,5 +1,37 @@
 #include "fdf.h"
 
+void del_map(long int **split, int nbr_row)
+{
+    int i;
+
+    i = 0;
+    while(i < nbr_row)
+    {
+        free(split[i]);
+        i++;
+    }
+    free(split);
+}
+
+void del_split(char **split)
+{
+    int i;
+
+    i = 0;
+    while(split[i])
+    {
+        free(split[i]);
+        i++;
+    }
+    free(split);
+}
+int ft_close_win(t_program *i)
+{
+    mlx_destroy_window(i->mlx, i->mlx_win);
+    //system("leaks fdf");
+    exit (0);
+    return (0);
+}
 int ft_htoi(char *str, int *b)
 {
 	int	len;
@@ -50,14 +82,12 @@ void get_line_in2points2(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y
     c.yinc = dy /(float)steps;
     x = c.c;
     y = c.i;
-    printf("%f ,  %f, %d, %d, %d\n",c.xinc, c.yinc, dx, dy, steps);
     if (c.i < c.j)
     {
         while (y < c.j)
         {
             x = x + c.xinc;
             y = y + c.yinc;
-            printf("%f , %f, %d   sdfgh\n",x , y, c.d);
             my_mlx_pixel_put(img, x, y, c.color);
         }
     }
@@ -67,7 +97,6 @@ void get_line_in2points2(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y
         {
             x = x + c.xinc;
             y = y + c.yinc;
-            printf("%f , %f, %d   sdfghsdfghjk\n",x , y, c.d);
             my_mlx_pixel_put(img, x, y, c.color);
         }
     }
@@ -90,12 +119,10 @@ void get_line_in2points(t_data *img, t_get_coord c) //// c = x0, d = x1 , i = y0
     c.yinc = dy /(float)steps;
     x = c.c;
     y = c.i;
-    printf("%f ,  %f, %d, %d, %d\n",c.xinc, c.yinc, dx, dy, steps);
     while (x < c.d)
     {
         x = x + c.xinc;
         y = y + c.yinc;
-        printf("%f , %f, %d   sdfgh\n",x , y, c.d);
         my_mlx_pixel_put(img, x, y, c.color);
     }
 }
@@ -119,7 +146,6 @@ void get_vertical_lines(t_data *img, t_get_coord c)
             c.i = c.array[1][i];
             c.j = c.array[1][i + c.s_aux];
             c.color = c.array[2][i];
-            printf("yheyyy --linea  %d   %d!!!\n", c.b, nbr_row);
             get_line_in2points2(img, c);
             i += c.s_aux;
             c.b++;
@@ -145,14 +171,10 @@ void get_horizontal_lines(t_data *img, t_get_coord c)
             c.i = c.array[1][i];
             c.j = c.array[1][i + 1];
             c.color = c.array[2][i];
-            printf("yeahhh !!!\n");
             get_line_in2points(img, c);
             i++;
-            printf("yes\n");
             if ((i+1)%c.s_aux == 0)
-            {  
-                printf("aaaaaaaaaaaaaaaayes ---> %d\n", c.s_aux);
-                //exit(-1);
+            {
                 aux_n_row++;
                 i++;
             }
@@ -199,12 +221,9 @@ void recalcul_scale(t_get_coord c, int *i, int *j, long int **map)
         max = *i;
     else
         max = *j;
-    printf("%d  %f escala\n", c.scale, max);
     c.scale = (c.scale * (980/max));
-    printf("%d   escala", c.scale);
     if (c.scale == 0)
         c.scale = 1;
-    //exit (-1);
     recalcul_coords (map, c);
 
 }
@@ -218,7 +237,6 @@ int get_the_center (long int *array, int i)
     min = array[a];
     while (array[a] != 2147483648)
     {
-        printf("hey2\n");
         if (array[a] < min)
             min = array[a];
         a++;
@@ -236,19 +254,14 @@ void center_coords (long int **array, int i, int j)
     a = 0;
     x_middle = get_the_center(array[0], i);
     y_middle = get_the_center(array[1], j);
-    printf("%d %d--> je\n", x_middle, y_middle);
-    //exit(-1);
     x_move = 500 - x_middle;
     y_move = 500 - y_middle;
     while (array[0][a] != 2147483648)
     {
-        printf("hey|%ld|\n", array[0][a]);
         array[0][a] += x_move;
         array[1][a] += y_move;
         a++;
     }
-    printf("salgo");
-    //exit(-1);
 }
 
 int	get_map_size(long int *array)
@@ -282,18 +295,9 @@ void put_coords_good (long int **map, t_get_coord c)
     int j;
     i = get_map_size(c.array[0]);
     j = get_map_size(c.array[1]);
-    printf("%d %d--> i\n", i, j);
-    //exit(-1);
     recalcul_scale(c, &i, &j, map);
     i = get_map_size(c.array[0]);
     j = get_map_size(c.array[1]);
-    /*if (i >= j)
-    {
-        if(i > 1000)
-            return ;   //////////hay que poner la funcion recalcul_coords
-    }
-    else if (j > 1000)
-        return ;*/    //////////hay que poner la funcion recalcul_coords
     center_coords (c.array, i, j);
 }
 
@@ -352,7 +356,10 @@ void iso(int *x, int *y, int z)
 int		ft_key(int keycode)
 {
 	if (keycode == 53)
+    {
+        //system("leaks fdf");
 		exit(0);
+    }
 	return (0);
 }
 
@@ -373,7 +380,6 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row, long int *h)
     coords.x = 500;	//CENTRO
 	coords.y = 500;	//CENTRO
     coords.scale = 50;
-    //printf ("%d---%d", s_row, nbr_row);
     coords.a = (s_row * coords.scale)/2;
     coords.b = (nbr_row * coords.scale)/2;
     coords.x_init = coords.x - coords.a;
@@ -387,22 +393,19 @@ void get_coordenates_init(long int **map, int s_row, int nbr_row, long int *h)
 	img.img = mlx_new_image(mlx_p.mlx, 1000, 1000);
 	img.ptr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
     coords.array = ft_coord_map (nbr_row, map, coords, h);
-    free(map);
+    del_map(map,nbr_row);
     coords.a = nbr_row;
-    printf("|%d||%d|",nbr_row, s_row);
-    //exit(0);
     while (coords.array[0][i] != 2147483648)
     {
         if (coords.array[0][i] < 1000 && coords.array[1][i] < 1000)
             my_mlx_pixel_put(&img, coords.array[0][i], coords.array[1][i], coords.array[2][i]);
-        //get_horizontal_lines(&img, coords);
-        //while ()
         i++;
     }
     get_horizontal_lines(&img, coords);
     get_vertical_lines(&img, coords);
 	mlx_put_image_to_window(mlx_p.mlx, mlx_p.mlx_win, img.img, 0, 0);
-	//mlx_hook(mlx_p.mlx_win, 2, 3, ft_key, mlx_p.mlx);
+	mlx_hook(mlx_p.mlx_win, 2, 0, ft_key, mlx_p.mlx);
+    mlx_hook(mlx_p.mlx_win, 17, 0, ft_close_win, &mlx_p);
 	mlx_loop(mlx_p.mlx);
 }
 
@@ -426,7 +429,6 @@ long int  **get_nbrs_map(char **split, int  s_row, int nbr_row, long int **h)
         while (split[i][j] && c < s_row)
         {
             map[i][c] = ft_atoi(split[i] + j);
-            //printf ("%-3ld", map[i][c]);
             if (map[i][c] > INT_MAX || map[i][c] < INT_MIN)
 			    ft_error();
             if (map[i][c] > 350)
@@ -464,23 +466,14 @@ void rev_hexas(char *map, int *i)
 
     b = 0;
     if (map[*i] != '0' || map[(*i) + 1] != 'x')
-    {
-        printf("heheheh\n");
         ft_error ();
-    }
     (*i) +=2;
     while (map[*i] && (map[*i] != ' ' && map[*i] != '\n') )
     {
         if (map[*i] < '0' || (map[*i] > '9' && map[*i] < 'A'))
-        {
-            printf("heheheh\n");
             ft_error ();
-        }
         if ((map[*i] > 'F' && map[*i] < 'a') || map[*i] > 'f')
-        {
-            printf("2heheheh\n");
             ft_error ();
-        }
         (*i)++;
         b++;
     }
@@ -500,10 +493,7 @@ void rev_map (char *map)
         if(map[i] == '-' || map[i] == '+')
             i++;
         if(!ft_isdigit(map[i]))
-        {
-            printf("|%c|2heheheh\n", map[i]);
             ft_error();
-        }
         while (ft_isdigit(map[i]))
             i++;
         if (map [i] == ',')
@@ -541,14 +531,18 @@ char *get_map(int fd)
         {
             all_map = ft_strdup(aux);
             free (aux);
+            aux = NULL;
         }
         else if (all_map)
         {
             line = ft_strjoin(all_map, aux);
             free (all_map);
             free (aux);
+            aux = NULL;
             all_map = ft_strdup(line);
         }
+        free(line);
+        line = NULL;
     }
     return (all_map);
 }
@@ -561,19 +555,17 @@ void    ft_error(void)
 
 int main (int argc, char **argv)
 {
-    /*int a = 0;
-    int hex = ft_htoi("0x00FF00", &a);
-    printf(" %d  ----  %d\n", hex, 0xFF00);
-    exit (-1);*/
     t_tools_map     m;
     m.i = 0;
     m.fd = open(argv[1], O_RDONLY);
     if (m.fd == -1 || argc != 2)
         ft_error();
     m.all_map = get_map (m.fd);
+    close(m.fd);
     rev_map (m.all_map);
     m.nbr_row = ft_word_count(m.all_map, '\n');
     m.split = ft_split(m.all_map, '\n');
+    free (m.all_map);
     m.s_row = ft_word_count(m.split[m.i], ' ');
     m.i++;
     while (m.nbr_row > 1 && m.split[m.i])
@@ -583,7 +575,7 @@ int main (int argc, char **argv)
             ft_error();
         m.i++;
     }
-    m.map =  get_nbrs_map(m.split, m.s_row, m.nbr_row, &m.colors);
+    m.map = get_nbrs_map(m.split, m.s_row, m.nbr_row, &m.colors);
+    del_split(m.split);
     get_coordenates_init(m.map, m.s_row, m.nbr_row, m.colors);
-    free (m.all_map);
 }
