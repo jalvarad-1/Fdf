@@ -52,7 +52,7 @@ all: $(NAME)
 $(OBJ): $(SRC)
 	gcc $(FLAGS) -c $(SRC)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) libft.h
 	ar rcs $(NAME) $(OBJ)
 
 clean:

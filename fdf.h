@@ -41,8 +41,8 @@ typedef struct s_get_coord
 {
 	int a;
     int b;
-    int	x;	//CENTRO
-	int y;	//CENTRO
+    int	x;
+	int y;
     int x_init;
     int y_init;
     int scale;

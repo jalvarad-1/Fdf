@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/15 15:45:28 by jalvarad          #+#    #+#              #
-#    Updated: 2021/09/10 19:07:36 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/09/11 11:43:31 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,15 +24,15 @@ OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc
 
-CFLAGS			= -Wall -Wextra -Werror -fsanitize=address
+CFLAGS			= -Wall -Wextra -Werror
 
 LFLAGS			= -lmlx -lXext -lX11 -lm
 
 MFLAGS			= -lmlx -framework OpenGL -framework AppKit
 
-all: make-libft $(NAME)
+all: make_libft $(NAME)
 
-lin: make-libft $(LNAME)
+lin: make_libft $(LNAME)
 
 $(LNAME): $(OBJS)
 		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) $(LFLAGS) -o $(NAME)
@@ -43,7 +43,7 @@ $(NAME): $(OBJS)
 $(OBJS): $(SRCS)
 		$(CC) $(CFLAGS) -c $(SRCS)
 
-make-libft:
+make_libft:
 		make -C $(LIBFT_DIR)
 
 clean:
