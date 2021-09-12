@@ -6,7 +6,7 @@
 #    By: jalvarad <jalvarad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/08/15 15:45:28 by jalvarad          #+#    #+#              #
-#    Updated: 2021/09/11 11:43:31 by jalvarad         ###   ########.fr        #
+#    Updated: 2021/09/12 12:30:24 by jalvarad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,16 @@ LIBFT			= libft.a
 
 LIBFT_DIR		= ./Libft/
 
-SRCS			= main.c
+SRCS			= fdf.c \
+				error_and_exits.c \
+				get_coordenates_init.c \
+				get_lines_coords.c \
+				get_nbrs_map.c \
+				other_utils.c \
+				parser_and_hexas.c \
+				put_coords_good.c \
+				utils.c \
+				draw_map.c
 
 OBJS			= $(SRCS:.c=.o)
 
@@ -34,10 +43,10 @@ all: make_libft $(NAME)
 
 lin: make_libft $(LNAME)
 
-$(LNAME): $(OBJS)
+$(LNAME): $(OBJS) fdf.h
 		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) $(LFLAGS) -o $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) fdf.h
 		$(CC) $(CFLAGS) $(OBJS) $(LIBFT_DIR)$(LIBFT) $(MFLAGS) -o $(NAME)
 
 $(OBJS): $(SRCS)
